@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <queue>
 #include <cstdlib>
 #include <ctime>
 
@@ -19,11 +20,16 @@ public:
         createVertices(windowWidth, windowHeight);
     }
 
+    // Оголошення публічного методу для отримання матриці суміжності
+    const vector<vector<int>>& getAdjacencyMatrix() const {
+        return adjacencyMatrix;
+    }
+
     void generateRandomGraph() {
         adjacencyMatrix.resize(numVertices, vector<int>(numVertices, 0));
 
         int edgesCount = 0;
-        
+
         while (edgesCount < numVertices * 2) {
             int vertex1 = rand() % numVertices;
             int vertex2 = rand() % numVertices;
@@ -36,9 +42,7 @@ public:
         }
     }
 
-
     void createVertices(int windowWidth, int windowHeight) {
-
         for (int i = 0; i < numVertices; ++i) {
             sf::CircleShape vertex(20.f);
             vertex.setFillColor(sf::Color::Blue);
@@ -48,7 +52,6 @@ public:
     }
 
     void draw(sf::RenderWindow& window) const {
-
         for (int i = 0; i < numVertices; ++i) {
             for (int j = i + 1; j < numVertices; ++j) {
                 if (adjacencyMatrix[i][j] == 1) {
@@ -61,9 +64,29 @@ public:
             }
         }
 
-
         for (const auto& vertex : vertices) {
             window.draw(vertex);
+        }
+    }
+
+    void BFS(int startVertex) const {
+        vector<bool> visited(numVertices, false);
+        queue<int> q;
+
+        visited[startVertex] = true;
+        q.push(startVertex);
+
+        while (!q.empty()) {
+            int currentVertex = q.front();
+            q.pop();
+            cout << currentVertex << " ";
+
+            for (int neighbor = 0; neighbor < numVertices; ++neighbor) {
+                if (adjacencyMatrix[currentVertex][neighbor] == 1 && !visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
+                }
+            }
         }
     }
 };
@@ -78,10 +101,26 @@ int main() {
         return 1;
     }
 
-    sf::RenderWindow window(sf::VideoMode(3840, 2160), "Graph Visualization");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Graph Visualization");
     window.clear(sf::Color::Black);
 
     Graph graph(numVertices, window.getSize().x, window.getSize().y);
+
+    cout << "Adjacency Matrix:" << endl;
+    // Використовуємо метод getAdjacencyMatrix для отримання матриці суміжності
+    const vector<vector<int>>& adjacencyMatrix = graph.getAdjacencyMatrix();
+    for (const auto& row : adjacencyMatrix) {
+        for (int val : row) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+
+    int startVertex;
+    cout << "Enter the start vertex for BFS traversal: ";
+    cin >> startVertex;
+    cout << "BFS Traversal: ";
+    graph.BFS(startVertex);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -97,6 +136,8 @@ int main() {
 
     return 0;
 }
+
+
 
 
 
