@@ -1,13 +1,20 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <SFML/Graphics.hpp>
 #include <ctime>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
+struct Edge {
+    int source, destination, weight;
+};
+
 class Graph {
 private:
-    vector<vector<int>> adjacencyMatrix;
+    vector<vector<pair<int, float>>> adjacencyList;
     int numVertices;
     vector<sf::CircleShape> vertices;
 
@@ -18,23 +25,35 @@ public:
         createVertices(windowWidth, windowHeight);
     }
 
-    const vector<vector<int>>& getAdjacencyMatrix() const {
-        return adjacencyMatrix;
+    const vector<vector<pair<int, float>>>& getAdjacencyList() const {
+        return adjacencyList;
     }
 
     void generateRandomGraph() {
-        adjacencyMatrix.resize(numVertices, vector<int>(numVertices, 0));
+        adjacencyList.resize(numVertices);
 
         int edgesCount = 0;
 
         while (edgesCount < numVertices * 2) {
             int vertex1 = rand() % numVertices;
             int vertex2 = rand() % numVertices;
+            int weight = static_cast<int>(rand() % 100 + 1); // Перетворюємо float на int
 
-            if (vertex1 != vertex2 && adjacencyMatrix[vertex1][vertex2] == 0) {
-                adjacencyMatrix[vertex1][vertex2] = 1;
-                adjacencyMatrix[vertex2][vertex1] = 1;
-                edgesCount += 2;
+
+            if (vertex1 != vertex2) {
+                bool alreadyConnected = false;
+                for (const auto& neighbor : adjacencyList[vertex1]) {
+                    if (neighbor.first == vertex2) {
+                        alreadyConnected = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyConnected) {
+                    adjacencyList[vertex1].emplace_back(vertex2, weight);
+                    adjacencyList[vertex2].emplace_back(vertex1, weight);
+                    edgesCount += 2;
+                }
             }
         }
     }
@@ -50,14 +69,13 @@ public:
 
     void draw(sf::RenderWindow& window) const {
         for (int i = 0; i < numVertices; ++i) {
-            for (int j = i + 1; j < numVertices; ++j) {
-                if (adjacencyMatrix[i][j] == 1) {
-                    sf::Vertex line[] = {
-                            sf::Vertex(vertices[i].getPosition() + sf::Vector2f(20.f, 20.f)),
-                            sf::Vertex(vertices[j].getPosition() + sf::Vector2f(20.f, 20.f))
-                    };
-                    window.draw(line, 2, sf::Lines);
-                }
+            for (const auto& neighbor : adjacencyList[i]) {
+                int neighborIndex = neighbor.first;
+                sf::Vertex line[] = {
+                        sf::Vertex(vertices[i].getPosition() + sf::Vector2f(20.f, 20.f)),
+                        sf::Vertex(vertices[neighborIndex].getPosition() + sf::Vector2f(20.f, 20.f))
+                };
+                window.draw(line, 2, sf::Lines);
             }
         }
 
@@ -67,15 +85,71 @@ public:
     }
 };
 
-
-#include <queue>
-class BFS {
+class KruskalMST {
 private:
-    const vector<vector<int>>& adjacencyMatrix;
+    const vector<vector<pair<int, float>>>& adjacencyList;
     int numVertices;
 
 public:
-    BFS(const Graph& graph) : adjacencyMatrix(graph.getAdjacencyMatrix()), numVertices(adjacencyMatrix.size()) {}
+    KruskalMST(const Graph& graph) : adjacencyList(graph.getAdjacencyList()), numVertices(adjacencyList.size()) {}
+
+    void findMST() const {
+        vector<Edge> edges;
+        for (int i = 0; i < numVertices; ++i) {
+            for (const auto& neighbor : adjacencyList[i]) {
+                edges.push_back({i, neighbor.first, static_cast<int>(neighbor.second)});
+
+            }
+        }
+
+        vector<int> parent(numVertices, -1);
+        vector<Edge> result;
+        sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
+            return a.weight < b.weight;
+        });
+
+        int edgeCount = 0;
+        for (Edge edge : edges) {
+            if (edgeCount == numVertices - 1)
+                break;
+
+            int sourceParent = findParent(parent, edge.source);
+            int destParent = findParent(parent, edge.destination);
+
+            if (sourceParent != destParent) {
+                result.push_back(edge);
+                unionSets(parent, sourceParent, destParent);
+                edgeCount++;
+            }
+        }
+
+        cout << "Edges in the Minimum Spanning Tree:" << endl;
+        for (Edge edge : result) {
+            cout << edge.source << " - " << edge.destination << " : " << edge.weight << endl;
+        }
+    }
+
+    int findParent(vector<int>& parent, int vertex) const {
+        if (parent[vertex] == -1)
+            return vertex;
+        return findParent(parent, parent[vertex]);
+    }
+
+    void unionSets(vector<int>& parent, int x, int y) const {
+        int xset = findParent(parent, x);
+        int yset = findParent(parent, y);
+        if (xset != yset)
+            parent[xset] = yset;
+    }
+};
+
+class BFS {
+private:
+    const vector<vector<pair<int, float>>>& adjacencyList;
+    int numVertices;
+
+public:
+    BFS(const Graph& graph) : adjacencyList(graph.getAdjacencyList()), numVertices(adjacencyList.size()) {}
 
     void traverse(int startVertex) const {
         vector<bool> visited(numVertices, false);
@@ -89,27 +163,24 @@ public:
             q.pop();
             cout << currentVertex << " ";
 
-            for (int neighbor = 0; neighbor < numVertices; ++neighbor) {
-                if (adjacencyMatrix[currentVertex][neighbor] == 1 && !visited[neighbor]) {
-                    visited[neighbor] = true;
-                    q.push(neighbor);
+            for (const auto& neighbor : adjacencyList[currentVertex]) {
+                int neighborVertex = neighbor.first;
+                if (!visited[neighborVertex]) {
+                    visited[neighborVertex] = true;
+                    q.push(neighborVertex);
                 }
             }
         }
     }
 };
 
-
-
-#include <stack>
-
 class DFS {
 private:
-    const vector<vector<int>>& adjacencyMatrix;
+    const vector<vector<pair<int, float>>>& adjacencyList;
     int numVertices;
 
 public:
-    DFS(const Graph& graph) : adjacencyMatrix(graph.getAdjacencyMatrix()), numVertices(adjacencyMatrix.size()) {}
+    DFS(const Graph& graph) : adjacencyList(graph.getAdjacencyList()), numVertices(adjacencyList.size()) {}
 
     void traverse(int startVertex) const {
         vector<bool> visited(numVertices, false);
@@ -123,18 +194,16 @@ public:
             s.pop();
             cout << currentVertex << " ";
 
-            for (int neighbor = 0; neighbor < numVertices; ++neighbor) {
-                if (adjacencyMatrix[currentVertex][neighbor] == 1 && !visited[neighbor]) {
-                    visited[neighbor] = true;
-                    s.push(neighbor);
+            for (const auto& neighbor : adjacencyList[currentVertex]) {
+                int neighborVertex = neighbor.first;
+                if (!visited[neighborVertex]) {
+                    visited[neighborVertex] = true;
+                    s.push(neighborVertex);
                 }
             }
         }
     }
 };
-
-
-using namespace std;
 
 int main() {
     int numVertices;
@@ -151,14 +220,18 @@ int main() {
 
     Graph graph(numVertices, window.getSize().x, window.getSize().y);
 
-    cout << "Adjacency Matrix:" << endl;
-    const vector<vector<int>>& adjacencyMatrix = graph.getAdjacencyMatrix();
-    for (const auto& row : adjacencyMatrix) {
-        for (int val : row) {
-            cout << val << " ";
+    cout << "Adjacency List:" << endl;
+    const vector<vector<pair<int, float>>>& adjacencyList = graph.getAdjacencyList();
+    for (int i = 0; i < numVertices; ++i) {
+        cout << "Vertex " << i << " -> ";
+        for (const auto& neighbor : adjacencyList[i]) {
+            cout << "(" << neighbor.first << ", " << neighbor.second << ") ";
         }
         cout << endl;
     }
+
+    KruskalMST kruskal(graph);
+    kruskal.findMST();
 
     int startVertex;
     cout << "Enter the start vertex for BFS traversal: ";
@@ -189,17 +262,5 @@ int main() {
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
