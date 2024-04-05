@@ -57,6 +57,46 @@ build CMakeFiles/untitled.dir/main.cpp.obj: CXX_COMPILER__untitled_unscanned_Deb
   OBJECT_DIR = CMakeFiles\untitled.dir
   OBJECT_FILE_DIR = CMakeFiles\untitled.dir
 
+build CMakeFiles/untitled.dir/graph.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/D/CLionProjects/untitled/graph.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DSFML_STATIC
+  DEP_FILE = CMakeFiles\untitled.dir\graph.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/include"
+  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+
+build CMakeFiles/untitled.dir/kruskal_algorithm.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/D/CLionProjects/untitled/kruskal_algorithm.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DSFML_STATIC
+  DEP_FILE = CMakeFiles\untitled.dir\kruskal_algorithm.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/include"
+  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+
+build CMakeFiles/untitled.dir/bfs.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/D/CLionProjects/untitled/bfs.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DSFML_STATIC
+  DEP_FILE = CMakeFiles\untitled.dir\bfs.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/include"
+  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+
+build CMakeFiles/untitled.dir/dfs.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/D/CLionProjects/untitled/dfs.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DSFML_STATIC
+  DEP_FILE = CMakeFiles\untitled.dir\dfs.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/include"
+  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+
+build CMakeFiles/untitled.dir/prima_algorithm.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/D/CLionProjects/untitled/prima_algorithm.cpp || cmake_object_order_depends_target_untitled
+  DEFINES = -DSFML_STATIC
+  DEP_FILE = CMakeFiles\untitled.dir\prima_algorithm.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/include"
+  OBJECT_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target untitled
@@ -65,7 +105,7 @@ build CMakeFiles/untitled.dir/main.cpp.obj: CXX_COMPILER__untitled_unscanned_Deb
 #############################################
 # Link the executable untitled.exe
 
-build untitled.exe: CXX_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/main.cpp.obj | C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-graphics-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-window-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-system-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libfreetype.a
+build untitled.exe: CXX_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/main.cpp.obj CMakeFiles/untitled.dir/graph.cpp.obj CMakeFiles/untitled.dir/kruskal_algorithm.cpp.obj CMakeFiles/untitled.dir/bfs.cpp.obj CMakeFiles/untitled.dir/dfs.cpp.obj CMakeFiles/untitled.dir/prima_algorithm.cpp.obj | C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-graphics-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-window-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libsfml-system-s-d.a C$:/Users/D/CLionProjects/lib/SFML/GCC$ 7.3.0$ MinGW$ (SEH)$ -$ 64-bit/SFML-2.5.1/lib/libfreetype.a
   FLAGS = -g
   LINK_FLAGS = -static -static-libgcc
   LINK_LIBRARIES = "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/lib/libsfml-graphics-s-d.a"  "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/lib/libsfml-window-s-d.a"  "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/lib/libsfml-system-s-d.a"  -lwinmm  -lgdi32  -lOpenGL32  "C:/Users/D/CLionProjects/lib/SFML/GCC 7.3.0 MinGW (SEH) - 64-bit/SFML-2.5.1/lib/libfreetype.a"  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
