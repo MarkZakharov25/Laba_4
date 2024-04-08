@@ -2,20 +2,20 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include <ctime>
-
-using namespace std;
+#include <set>
 
 class Graph {
 private:
-    vector<vector<pair<int, float>>> adjacencyList;
+    std::vector<std::vector<std::pair<int, float>>> adjacencyList;
     int numVertices;
-    vector<sf::CircleShape> vertices;
+    bool isDirected;
+    bool isWeighted;
+    std::vector<sf::CircleShape> vertices;
 
 public:
-    Graph(int numVertices, int windowWidth, int windowHeight);
+    Graph(int numVertices, bool isDirected, bool isWeighted, int windowWidth, int windowHeight);
 
-    const vector<vector<pair<int, float>>>& getAdjacencyList() const;
+    const std::vector<std::vector<std::pair<int, float>>>& getAdjacencyList() const;
 
     void generateRandomGraph();
 
@@ -23,3 +23,4 @@ public:
 
     void draw(sf::RenderWindow& window) const;
 };
+
