@@ -18,6 +18,8 @@ add_executable(untitled main.cpp
         prima_algorithm.cpp
         dijkstra.h
         dijkstra.cpp
+        fordfulkerson.h
+        fordfulkerson.cpp
 )
 
 set(SFML_DIR "C:\\Users\\D\\CLionProjects\\lib\\SFML\\GCC 7.3.0 MinGW (SEH) - 64-bit\\SFML-2.5.1\\lib\\cmake\\SFML")

@@ -3,6 +3,7 @@
 #include "graph.h"
 #include <vector>
 #include <queue>
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 
@@ -15,5 +16,10 @@ public:
     BFS(const Graph& graph);
 
     void traverse(int startVertex) const;
+    void draw(sf::RenderWindow& window, const Graph& graph, int startVertex) const;
 };
+
+
+
+
 

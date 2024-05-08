@@ -15,5 +15,6 @@ public:
     DFS(const Graph& graph);
 
     void traverse(int startVertex) const;
+    void draw(sf::RenderWindow& window, const Graph& graph, int startVertex) const;
 };
 

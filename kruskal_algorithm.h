@@ -24,5 +24,7 @@ public:
     int findParent(vector<int>& parent, int vertex) const;
 
     void unionSets(vector<int>& parent, int x, int y) const;
+
+    void draw(sf::RenderWindow& window, const Graph& graph) const;
 };
 
