@@ -3,9 +3,10 @@
 
 DFS::DFS(const Graph& graph) : adjacencyList(graph.getAdjacencyList()), numVertices(adjacencyList.size()) {}
 
-void DFS::traverse(int startVertex) const {
+std::vector<std::pair<int, int>> DFS::traverse(int startVertex) const {
     vector<bool> visited(numVertices, false);
     stack<int> s;
+    std::vector<std::pair<int, int>> traversedEdges;
 
     visited[startVertex] = true;
     s.push(startVertex);
@@ -27,62 +28,29 @@ void DFS::traverse(int startVertex) const {
         if (!unvisitedNeighbors.empty()) {
             sort(unvisitedNeighbors.begin(), unvisitedNeighbors.end());
             s.push(unvisitedNeighbors.front());
+            traversedEdges.push_back({currentVertex, unvisitedNeighbors.front()});
             visited[unvisitedNeighbors.front()] = true;
         }
     }
+    return traversedEdges;
 }
 
 
 
-void DFS::draw(sf::RenderWindow& window, const Graph& graph, int startVertex) const {
-    const sf::Color visitedColor = sf::Color::Green;
-    const sf::Color unvisitedColor = sf::Color::Blue;
+void DFS::draw(sf::RenderWindow& window, const Graph& graph, const std::vector<std::pair<int, int>>& traversedEdges) const {
     const sf::Color pathColor = sf::Color::Red;
-
     auto& vertices = const_cast<std::vector<sf::CircleShape>&>(graph.getVertices());
-
-    std::vector<bool> visited(vertices.size(), false);
-
-    std::stack<int> s;
-
-    s.push(startVertex);
-    visited[startVertex] = true;
-
     std::vector<std::pair<sf::Vector2f, sf::Vector2f>> redEdges;
 
-    graph.draw(window);
-
-    int currentEdgeIndex = -1;
-
-    while (!s.empty()) {
-        int currentVertex = s.top();
-
-        const auto& neighbors = graph.getAdjacencyList()[currentVertex];
-
-        int nextNeighbor = -1;
-        for (const auto& neighbor : neighbors) {
-            int neighborVertex = neighbor.first;
-            if (!visited[neighborVertex] && (nextNeighbor == -1 || neighborVertex < nextNeighbor)) {
-                nextNeighbor = neighborVertex;
-            }
-        }
-
-        if (nextNeighbor != -1) {
-            visited[nextNeighbor] = true;
-            s.push(nextNeighbor);
-
-            sf::Vector2f startPoint = vertices[currentVertex].getPosition() + sf::Vector2f(20.f, 20.f);
-            sf::Vector2f endPoint = vertices[nextNeighbor].getPosition() + sf::Vector2f(20.f, 20.f);
-            sf::Vertex line[] = {
-                    sf::Vertex(startPoint, pathColor),
-                    sf::Vertex(endPoint, pathColor)
-            };
-            redEdges.push_back({startPoint, endPoint});
-        } else {
-            s.pop();
-        }
+    for (const auto& edge : traversedEdges) {
+        int startVertex = edge.first;
+        int endVertex = edge.second;
+        sf::Vector2f startPoint = vertices[startVertex].getPosition() + sf::Vector2f(20.f, 20.f);
+        sf::Vector2f endPoint = vertices[endVertex].getPosition() + sf::Vector2f(20.f, 20.f);
+        redEdges.push_back({startPoint, endPoint});
     }
 
+    int currentEdgeIndex = -1;
 
     while (window.isOpen()) {
         sf::Event event;

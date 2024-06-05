@@ -1,27 +1,20 @@
 #pragma once
+
 #include <vector>
 #include <limits>
-#include "queue"
+#include "SFML/Graphics.hpp"
 #include "graph.h"
 
-class Dijkstra {
-public:
+struct Dijkstra {
     Dijkstra(const std::vector<std::vector<std::pair<int, float>>>& graph);
 
-    std::pair<std::vector<int>, std::vector<std::pair<int, int>>> shortestPath(int startVertex) const;
+    std::pair<std::vector<int>, std::vector<std::tuple<int, int, float>>> shortestPath(int startVertex);
 
+    void draw(sf::RenderWindow& window, const Graph& graph, const std::vector<std::tuple<int, int, float>>& useEdges) const;
 
-    void draw(sf::RenderWindow& window, const Graph& graph,
-              const std::set<std::pair<int, int>>& useEdges) const;
 
 private:
     std::vector<std::vector<std::pair<int, float>>> graph_;
 
-    std::vector<std::pair<int, int>> useEdges;
-
-
-    int findMinDistanceVertex(const std::vector<int>& distances, const std::vector<bool>& visited) const;
-
+    int findMinDistanceVertex(const std::vector<int>& distances, const std::vector<bool>& visited);
 };
-
-

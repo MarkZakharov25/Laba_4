@@ -14,7 +14,7 @@ private:
 public:
     DFS(const Graph& graph);
 
-    void traverse(int startVertex) const;
-    void draw(sf::RenderWindow& window, const Graph& graph, int startVertex) const;
+    std::vector<std::pair<int, int>> traverse(int startVertex) const;
+    void draw(sf::RenderWindow& window, const Graph& graph, const std::vector<std::pair<int, int>>& traversedEdges) const;
 };
 

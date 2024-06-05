@@ -65,8 +65,8 @@ int main() {
                 cout << "Enter the start vertex for BFS traversal: ";
                 cin >> startVertexBFS;
                 BFS bfs(graph);
-                bfs.traverse(startVertexBFS);
-                bfs.draw(window_bfs, graph, startVertexBFS);
+                auto traversedEdges = bfs.traverse(startVertexBFS);
+                bfs.draw(window_bfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -76,8 +76,11 @@ int main() {
                 cout << "Enter the start vertex for DFS traversal: ";
                 cin >> startVertexDFS;
                 DFS dfs(graph);
-                dfs.traverse(startVertexDFS);
-                dfs.draw(window_dfs, graph, startVertexDFS);
+                auto traversedEdges = dfs.traverse(startVertexDFS);
+
+                // Initialize sf::RenderWindow window_dfs here
+
+                dfs.draw(window_dfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -99,8 +102,8 @@ int main() {
                 cout << "Enter the start vertex for BFS traversal: ";
                 cin >> startVertexBFS;
                 BFS bfs(graph);
-                bfs.traverse(startVertexBFS);
-                bfs.draw(window_bfs, graph, startVertexBFS);
+                auto traversedEdges = bfs.traverse(startVertexBFS);
+                bfs.draw(window_bfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -110,8 +113,11 @@ int main() {
                 cout << "Enter the start vertex for DFS traversal: ";
                 cin >> startVertexDFS;
                 DFS dfs(graph);
-                dfs.traverse(startVertexDFS);
-                dfs.draw(window_dfs, graph, startVertexDFS);
+                auto traversedEdges = dfs.traverse(startVertexDFS);
+
+                // Initialize sf::RenderWindow window_dfs here
+
+                dfs.draw(window_dfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -136,11 +142,10 @@ int main() {
                 cout << "Enter the start vertex for BFS traversal: ";
                 cin >> startVertexBFS;
                 BFS bfs(graph);
-                bfs.traverse(startVertexBFS);
-                bfs.draw(window_bfs, graph, startVertexBFS);
+                auto traversedEdges = bfs.traverse(startVertexBFS);
+                bfs.draw(window_bfs, graph, traversedEdges);
                 cout << endl;
                 break;
-
             }
 
             case 2: {
@@ -149,8 +154,11 @@ int main() {
                 cout << "Enter the start vertex for DFS traversal: ";
                 cin >> startVertexDFS;
                 DFS dfs(graph);
-                dfs.traverse(startVertexDFS);
-                dfs.draw(window_dfs, graph, startVertexDFS);
+                auto traversedEdges = dfs.traverse(startVertexDFS);
+
+                // Initialize sf::RenderWindow window_dfs here
+
+                dfs.draw(window_dfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -179,28 +187,31 @@ int main() {
 
                 Dijkstra dijkstraAlgorithm(adjacencyList);
                 auto result = dijkstraAlgorithm.shortestPath(startVertexDijkstra);
+                const std::vector<int>& shortestDistances = result.first;
+                const std::vector<std::tuple<int, int, float>>& traversedEdges = result.second;
 
-                std::set<std::pair<int, int>> uniqueEdges; // Множина для зберігання унікальних ребер
-                for (const auto& edge : result.second) {
-                    uniqueEdges.insert(edge); // Додавання ребра до множини
+                std::cout << "Shortest distances from vertex " << startVertexDijkstra << ":\n";
+                for (int v = 0; v < shortestDistances.size(); ++v) {
+                    std::cout << "Vertex " << v << ": " << shortestDistances[v] << '\n';
                 }
 
-                if (uniqueEdges.empty()) {
+                if (traversedEdges.empty()) {
                     std::cout << "No edges traversed by Dijkstra's algorithm.\n";
                 } else {
-                    std::cout << "Edges traversed by Dijkstra's algorithm:\n";
-                    for (const auto& edge : uniqueEdges) {
-                        std::cout << "Edge: " << edge.first << " -> " << edge.second << '\n';
+                    std::cout << "Edges traversed by Dijkstra's algorithm (sorted by weight):\n";
+                    for (const auto& edge : traversedEdges) {
+                        std::cout << "Edge: " << std::get<0>(edge) << " -> " << std::get<1>(edge) << " (Weight: " << std::get<2>(edge) << ")\n";
                     }
                 }
 
-                dijkstraAlgorithm.draw(window_dijkstra, graph, uniqueEdges);
+                dijkstraAlgorithm.draw(window_dijkstra, graph, traversedEdges);
 
                 break;
             }
         }
+    }
 
-    } else {
+    else {
 
         cout << "Choose algorithm:" << endl;
         cout << "1. BFS" << endl;
@@ -217,8 +228,8 @@ int main() {
                 cout << "Enter the start vertex for BFS traversal: ";
                 cin >> startVertexBFS;
                 BFS bfs(graph);
-                bfs.traverse(startVertexBFS);
-                bfs.draw(window_bfs, graph, startVertexBFS);
+                auto traversedEdges = bfs.traverse(startVertexBFS);
+                bfs.draw(window_bfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }
@@ -229,8 +240,11 @@ int main() {
                 cout << "Enter the start vertex for DFS traversal: ";
                 cin >> startVertexDFS;
                 DFS dfs(graph);
-                dfs.traverse(startVertexDFS);
-                dfs.draw(window_dfs, graph, startVertexDFS);
+                auto traversedEdges = dfs.traverse(startVertexDFS);
+
+                // Initialize sf::RenderWindow window_dfs here
+
+                dfs.draw(window_dfs, graph, traversedEdges);
                 cout << endl;
                 break;
             }

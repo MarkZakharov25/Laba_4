@@ -71,6 +71,7 @@ std::pair<int, std::vector<Iteration>> FordFulkerson::findMaxFlow(int source, in
     return {maxFlow, iterations};
 }
 
+
 void FordFulkerson::draw(sf::RenderWindow& window, const Graph& graph, std::vector<Iteration> iterations)  {
     const sf::Color pathColor = sf::Color::Red;
 

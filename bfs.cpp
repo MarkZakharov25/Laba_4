@@ -7,9 +7,10 @@
 
 BFS::BFS(const Graph& graph) : adjacencyList(graph.getAdjacencyList()), numVertices(adjacencyList.size()) {}
 
-void BFS::traverse(int startVertex) const {
-    vector<bool> visited(numVertices, false);
-    queue<int> q;
+std::vector<std::pair<int, int>> BFS::traverse(int startVertex) const {
+    std::vector<bool> visited(numVertices, false);
+    std::queue<int> q;
+    std::vector<std::pair<int, int>> traversedEdges;
 
     visited[startVertex] = true;
     q.push(startVertex);
@@ -17,63 +18,36 @@ void BFS::traverse(int startVertex) const {
     while (!q.empty()) {
         int currentVertex = q.front();
         q.pop();
-        cout << currentVertex << " ";
 
         for (const auto& neighbor : adjacencyList[currentVertex]) {
             int neighborVertex = neighbor.first;
             if (!visited[neighborVertex]) {
                 visited[neighborVertex] = true;
                 q.push(neighborVertex);
+                traversedEdges.push_back({currentVertex, neighborVertex});
             }
         }
     }
+
+    return traversedEdges;
 }
 
-
-void BFS::draw(sf::RenderWindow& window, const Graph& graph, int startVertex) const {
-    const sf::Color visitedColor = sf::Color::Green;
-    const sf::Color unvisitedColor = sf::Color::Blue;
+void BFS::draw(sf::RenderWindow& window, const Graph& graph, const std::vector<std::pair<int, int>>& traversedEdges) const {
     const sf::Color pathColor = sf::Color::Red;
 
     auto& vertices = const_cast<std::vector<sf::CircleShape>&>(graph.getVertices());
 
-    std::vector<bool> visited(vertices.size(), false);
+    std::vector<std::vector<sf::Vertex>> redEdges;
 
-    std::queue<int> q;
-
-    q.push(startVertex);
-    visited[startVertex] = true;
-
-    std::vector<std::pair<sf::Vector2f, sf::Vector2f>> redEdges;
-
-    graph.draw(window);
+    for (const auto& edge : traversedEdges) {
+        int startVertex = edge.first;
+        int endVertex = edge.second;
+        sf::Vector2f startPoint = vertices[startVertex].getPosition() + sf::Vector2f(20.f, 20.f);
+        sf::Vector2f endPoint = vertices[endVertex].getPosition() + sf::Vector2f(20.f, 20.f);
+        redEdges.push_back({sf::Vertex(startPoint, pathColor), sf::Vertex(endPoint, pathColor)});
+    }
 
     int currentEdgeIndex = -1;
-
-    while (!q.empty()) {
-        int currentVertex = q.front();
-        q.pop();
-
-        const auto& neighbors = graph.getAdjacencyList()[currentVertex];
-
-        for (const auto& neighbor : neighbors) {
-            int neighborVertex = neighbor.first;
-            if (!visited[neighborVertex]) {
-                q.push(neighborVertex);
-                visited[neighborVertex] = true;
-
-                sf::Vector2f startPoint = vertices[currentVertex].getPosition() + sf::Vector2f(20.f, 20.f);
-                sf::Vector2f endPoint = vertices[neighborVertex].getPosition() + sf::Vector2f(20.f, 20.f);
-
-                sf::Vertex line[] = {
-                        sf::Vertex(startPoint, pathColor),
-                        sf::Vertex(endPoint, pathColor)
-                };
-
-                redEdges.push_back({startPoint, endPoint});
-            }
-        }
-    }
 
     while (window.isOpen()) {
         sf::Event event;
@@ -81,8 +55,8 @@ void BFS::draw(sf::RenderWindow& window, const Graph& graph, int startVertex) co
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Right) {
                     currentEdgeIndex++;
-                    if (currentEdgeIndex >= redEdges.size()) {
-                        currentEdgeIndex = redEdges.size() - 1;
+                    if (currentEdgeIndex >= traversedEdges.size()) {
+                        currentEdgeIndex = traversedEdges.size() - 1;
                     }
                 } else if (event.key.code == sf::Keyboard::Left) {
                     currentEdgeIndex--;
@@ -100,17 +74,17 @@ void BFS::draw(sf::RenderWindow& window, const Graph& graph, int startVertex) co
         graph.draw(window);
 
         for (int i = 0; i <= currentEdgeIndex; ++i) {
-            const auto& edge = redEdges[i];
-            sf::Vertex line[] = {
-                    sf::Vertex(edge.first, pathColor),
-                    sf::Vertex(edge.second, pathColor)
-            };
-            window.draw(line, 2, sf::Lines);
+            if (i >= 0 && i < redEdges.size()) {
+                window.draw(&redEdges[i][0], 2, sf::Lines);
+            }
         }
 
         window.display();
     }
 }
+
+
+
 
 
 

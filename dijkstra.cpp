@@ -2,16 +2,19 @@
 
 Dijkstra::Dijkstra(const std::vector<std::vector<std::pair<int, float>>>& graph) : graph_(graph) {}
 
-std::pair<std::vector<int>, std::vector<std::pair<int, int>>> Dijkstra::shortestPath(int startVertex) const {
+std::pair<std::vector<int>, std::vector<std::tuple<int, int, float>>> Dijkstra::shortestPath(int startVertex) {
     int numVertices = graph_.size();
     std::vector<int> distances(numVertices, std::numeric_limits<int>::max());
     std::vector<bool> visited(numVertices, false);
-    distances[startVertex] = 0;
-    std::vector<std::pair<int, int>> edges;
+    std::vector<std::tuple<int, int, float>> traversedEdges;
+    std::vector<int> parent(numVertices, -1);
 
-    std::vector<int> shortestPathParent(numVertices, -1);
+    distances[startVertex] = 0;
+
     for (int count = 0; count < numVertices - 1; ++count) {
         int u = findMinDistanceVertex(distances, visited);
+        if (u == -1) break;
+
         visited[u] = true;
 
         for (const auto& edge : graph_[u]) {
@@ -19,34 +22,25 @@ std::pair<std::vector<int>, std::vector<std::pair<int, int>>> Dijkstra::shortest
             float weight = edge.second;
             if (!visited[v] && distances[u] != std::numeric_limits<int>::max() && distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
-                edges.push_back({u, v});
-                shortestPathParent[v] = u;
+                parent[v] = u;
             }
         }
     }
 
-    std::sort(edges.begin(), edges.end(), [this](const std::pair<int, int>& a, const std::pair<int, int>& b) {
-        return graph_[a.first][a.second].second < graph_[b.first][b.second].second;
+    for (int v = 0; v < numVertices; ++v) {
+        if (parent[v] != -1) {
+            traversedEdges.push_back({parent[v], v, distances[v]});
+        }
+    }
+
+    std::sort(traversedEdges.begin(), traversedEdges.end(), [](const std::tuple<int, int, float>& a, const std::tuple<int, int, float>& b) {
+        return std::get<2>(a) < std::get<2>(b);
     });
 
-    std::vector<std::pair<int, int>> useEdges;
-    for (int v = 0; v < numVertices; ++v) {
-        if (v != startVertex && distances[v] != std::numeric_limits<int>::max()) {
-            int parent = v;
-            while (parent != startVertex) {
-                int grandparent = shortestPathParent[parent];
-                useEdges.push_back({grandparent, parent});
-                parent = grandparent;
-            }
-        }
-    }
-
-    return {distances, useEdges};
+    return {distances, traversedEdges};
 }
 
-
-
-int Dijkstra::findMinDistanceVertex(const std::vector<int>& distances, const std::vector<bool>& visited) const {
+int Dijkstra::findMinDistanceVertex(const std::vector<int>& distances, const std::vector<bool>& visited) {
     int minDistance = std::numeric_limits<int>::max();
     int minVertex = -1;
 
@@ -60,26 +54,20 @@ int Dijkstra::findMinDistanceVertex(const std::vector<int>& distances, const std
     return minVertex;
 }
 
-void Dijkstra::draw(sf::RenderWindow& window, const Graph& graph, const std::set<std::pair<int, int>>& useEdges) const {
-
+void Dijkstra::draw(sf::RenderWindow& window, const Graph& graph, const std::vector<std::tuple<int, int, float>>& useEdges) const {
     const sf::Color pathColor = sf::Color::Red;
+
     auto& vertices = const_cast<std::vector<sf::CircleShape>&>(graph.getVertices());
-    std::vector<std::pair<int, int>> highlightedEdges;
-    std::vector<std::pair<sf::Vector2f, sf::Vector2f>> redEdges;
+
+    std::vector<sf::Vertex> redEdges;
 
     for (const auto& edge : useEdges) {
-        int u = edge.first;
-        int v = edge.second;
-        highlightedEdges.push_back({u, v});
-
+        int u = std::get<0>(edge);
+        int v = std::get<1>(edge);
         sf::Vector2f startPoint = vertices[u].getPosition() + sf::Vector2f(20.f, 20.f);
         sf::Vector2f endPoint = vertices[v].getPosition() + sf::Vector2f(20.f, 20.f);
-
-        sf::Vertex line[] = {
-                sf::Vertex(startPoint, pathColor),
-                sf::Vertex(endPoint, pathColor)
-        };
-        window.draw(line, 2, sf::Lines);
+        redEdges.push_back(sf::Vertex(startPoint, pathColor));
+        redEdges.push_back(sf::Vertex(endPoint, pathColor));
     }
 
     int currentEdgeIndex = -1;
@@ -90,8 +78,8 @@ void Dijkstra::draw(sf::RenderWindow& window, const Graph& graph, const std::set
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Right) {
                     currentEdgeIndex++;
-                    if (currentEdgeIndex >= highlightedEdges.size()) {
-                        currentEdgeIndex = highlightedEdges.size() - 1;
+                    if (currentEdgeIndex >= useEdges.size()) {
+                        currentEdgeIndex = useEdges.size() - 1;
                     }
                 } else if (event.key.code == sf::Keyboard::Left) {
                     currentEdgeIndex--;
@@ -109,16 +97,11 @@ void Dijkstra::draw(sf::RenderWindow& window, const Graph& graph, const std::set
         graph.draw(window);
 
         for (int i = 0; i <= currentEdgeIndex; ++i) {
-            const auto& edge = highlightedEdges[i];
-            sf::Vertex line[] = {
-                    sf::Vertex(vertices[edge.first].getPosition() + sf::Vector2f(20.f, 20.f), pathColor),
-                    sf::Vertex(vertices[edge.second].getPosition() + sf::Vector2f(20.f, 20.f), pathColor)
-            };
-            window.draw(line, 2, sf::Lines);
+            if (i >= 0 && i < redEdges.size()) {
+                window.draw(&redEdges[2 * i], 2, sf::Lines);
+            }
         }
 
         window.display();
     }
 }
-
-
